@@ -1,0 +1,264 @@
+<main>
+    <article>
+        <section class="library-section">
+            <div class="col-5">
+                <p-table
+                #dt
+                [value]="libros"
+                dataKey="id"
+                [rowHover]="true"
+                [rows]="10"
+                [showCurrentPageReport]="true"
+                [rowsPerPageOptions]="[10, 25, 50]"
+                responsiveLayout="stack"
+                [paginator]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [filterDelay]="0"
+                [globalFilterFields]="['titulo', 'autor']"
+              >
+                <ng-template pTemplate="caption">
+                  <div class="table-header">
+                    LIBROS
+                  </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th id="checkbox" style="width: 3rem">
+                    </th>
+                    <th id="titulo" pSortableColumn="titulo">
+                      <div class="flex justify-content-between align-items-center">
+                        Título
+                        <p-sortIcon field="titulo"></p-sortIcon>
+                        <p-columnFilter
+                          type="text"
+                          field="titulo"
+                          display="menu"
+                          class="ml-auto"
+                        ></p-columnFilter>
+                      </div>
+                    </th>
+                    <th id="autor" pSortableColumn="autor">
+                      <div class="flex justify-content-between align-items-center">
+                        Autor
+                        <p-sortIcon field="autor"></p-sortIcon>
+                        <p-columnFilter
+                          type="text"
+                          field="autor"
+                          display="menu"
+                          class="ml-auto"
+                        ></p-columnFilter>
+                      </div>
+                    </th>
+                    <th id="publish_data" pSortableColumn="publish_data">
+                      <div class="flex justify-content-between align-items-center">
+                        Fecha publicación
+                        <p-sortIcon field="publish_data"></p-sortIcon>
+                        <p-columnFilter
+                          type="text"
+                          field="publish_data"
+                          display="menu"
+                          class="ml-auto"
+                        ></p-columnFilter>
+                      </div>
+                    </th>
+                    <th id="categoria" pSortableColumn="categoria">
+                        <div class="flex justify-content-between align-items-center">
+                          Categoría
+                          <p-sortIcon field="categoria"></p-sortIcon>
+                          <p-columnFilter
+                            type="text"
+                            field="categoria"
+                            display="menu"
+                            class="ml-auto"
+                          ></p-columnFilter>
+                        </div>
+                    </th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-libro>
+                  <tr class="p-selectable-row">
+                    <td>
+                    </td>
+                    <td>
+                      <span class="p-column-title">Título
+                        </span>
+                      {{ libro.titulo }}
+                    </td>
+                    <td>
+                      <span class="p-column-title">Autor
+                      </span>
+                      {{ libro.autor }}
+                    </td>
+                    <td>
+                      <span class="p-column-title">Fecha publicación
+                      </span>
+                      {{ libro.publish_data | date }}
+                    </td>
+                    <td>
+                        <span class="p-column-title">Categoría
+                        </span>
+                        {{ libro.categoria }}
+                    </td>
+                    <td class="td-button">
+                        <button
+                        pButton
+                        pRipple
+                        type="button"
+                        label="Editar"
+                        icon="pi pi-pencil"
+                        class="p-button-rounded p-button-raised"
+                        (click)="showDialog(libro)"
+                        ></button>
+                        <button
+                        pButton
+                        pRipple
+                        type="button"
+                        icon="pi pi-trash"
+                        label="Eliminar"
+                        class="p-button-rounded p-button-raised p-button-danger"
+                        (click)="deleteLibro(libro.id)"
+                        ></button>
+                    </td>
+                    <td>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="footer">
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                    </td>
+                    <td>
+                        <button
+                        pButton
+                        label="Añadir Libro"
+                        type="button"
+                        class="p-button-raised p-button-rounded mr-2"
+                        (click)="addLibro()"
+                        icon="pi pi-book"
+                        >
+                        </button>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+              <form [formGroup]="formData" (ngSubmit)="saveForm()">
+                <p-dialog
+                [header]="modalMode ? 'Añadir Libro' : 'Editar Libro'"
+                [(visible)]="display"
+                [blockScroll]="true"
+                [style]="{ height: '600px', width: '1000px' }"
+                [modal]="true"
+                >
+                <div class="div-form">
+                    <input
+                    pInputText
+                    class="form-control col-3"
+                    type="text"
+                    placeholder="Título"
+                    style="margin: 0px 10px 10px 0px"
+                    name="titulo"
+                    formControlName="titulo"
+                    />
+                    <div class="div-error" *ngIf="formData.get('titulo')!.hasError('required') && formData.get('titulo')!.touched">
+                      El título es obligatorio.
+                    </div>
+                    <div class="div-error" *ngIf="formData.get('titulo')!.hasError('maxlength')">
+                        El valor introducido es demasiado largo.
+                    </div>
+                    <input
+                    pInputText
+                    class="form-control col-3"
+                    type="text"
+                    placeholder="Autor"
+                    style="margin: 0px 10px 10px 0px"
+                    name="autor"
+                    formControlName="autor"
+                    />
+                    <div class="div-error" *ngIf="formData.get('autor')!.hasError('required') && formData.get('autor')!.touched">
+                        El autor es obligatorio.
+                    </div>
+                    <div class="div-error" *ngIf="formData.get('autor')!.hasError('maxlength') && formData.get('autor')!.touched">
+                        El valor introducido es demasiado largo.
+                    </div>
+                    <input
+                    pInputText
+                    class="form-control col-3"
+                    type="date"
+                    label="Fecha publicación"
+                    style="margin: 0px 10px 10px 0px"
+                    name="publish_data"
+                    formControlName="publish_data"
+                    (change)="getDateValue($event)"
+                    />
+                    <div class="div-error" *ngIf="formData.get('publish_data')!.hasError('required') && formData.get('publish_data')!.touched">
+                        La fecha de publicación es requerida.
+                    </div>
+                    <input
+                    pInputText
+                    class="form-control col-3"
+                    type="text"
+                    placeholder="Categoría"
+                    style="margin: 0px 10px 10px 0px"
+                    name="categoria"
+                    formControlName="categoria"
+                    />
+                    <div class="div-error" *ngIf="formData.get('categoria')!.hasError('required') && formData.get('categoria')!.touched">
+                       La categoría es requerida.
+                    </div>
+                    <div class="div-error" *ngIf="formData.get('categoria')!.hasError('maxlength') && formData.get('categoria')!.touched">
+                        El valor introducido es demasiado largo.
+                    </div>
+                </div>
+                  <ng-template pTemplate="footer">
+                    <button
+                        pButton
+                        label="Guardar libro"
+                        type="submit"
+                        class="p-button-raised p-button-rounded mr-2"
+                        icon="pi pi-book"
+                        >
+                        </button>
+                    <p-button
+                      (click)="display = false"
+                      label="Salir"
+                      styleClass="p-button-raised p-button-rounded p-button-danger"
+                    ></p-button>
+                  </ng-template>
+                </p-dialog> 
+            </form>
+            </div>
+        </section>
+    </article>
+</main>
+
+<p-confirmDialog #cd header="Confirmación" icon="pi pi-exclamation-triangle">
+    <ng-template pTemplate="header">
+      <h3>¿Desea eliminar el libro?</h3>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button
+        type="button"
+        pButton
+        class="p-button-rounded p-button-raised"
+        icon="pi pi-times"
+        label="No"
+        (click)="cd.reject()"
+      ></button>
+      <button
+        type="button"
+        pButton
+        class="p-button-rounded p-button-raised p-button-danger"
+        icon="pi pi-check"
+        label="Si"
+        (click)="cd.accept()"
+      ></button>
+    </ng-template>
+</p-confirmDialog>
+
+<p-toast></p-toast>

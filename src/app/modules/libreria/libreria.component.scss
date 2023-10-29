@@ -1,0 +1,22 @@
+.library-section {
+    margin: 8rem 8rem 0;
+    border: 1px solid grey;
+}
+
+.td-button {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.div-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.div-error {
+    margin-top: -16px;
+    color: #ff0000;
+}
